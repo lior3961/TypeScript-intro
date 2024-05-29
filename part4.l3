@@ -1,0 +1,70 @@
+#lang racket/base
+
+
+; Signature: append(l1, l2)
+; Type: [List(T) * List(T) -> List(T)]
+; Purpose: Concatenate two lists into one.
+; Pre-conditions: None
+; Tests:
+;   (append '(1 2) '(3 4)) => '(1 2 3 4)
+;   (append '() '(1 2)) => '(1 2)
+;   (append '(1 2) '()) => '(1 2)
+;   (append '() '()) => '()
+(define append
+  (lambda (l1 l2)
+    (if (empty? l1)
+        l2
+        (cons (car l1) (append (cdr l1) l2)))
+  )
+)
+
+; Signature: reverse(l)
+; Type: [List(T) -> List(T)]
+; Purpose: given a list, returns a list with a reverse order
+; Pre-conditions: None
+; Tests:
+;   (reverse '(1 2) => '(2 1))
+;   (reverse '(1 2 3) => '(3 2 1))
+;   (reverse '() => '())
+(define reverse
+    (lambda (l)
+        (if(empty? l)
+            l
+            (append(reverse(cdr l)) (list(car l)))
+        )
+    )
+)
+
+; Signature: duplicate-items(lst, dup-count) -> list
+; Type: [List(T) * List(Number) -> List(T)]
+; Purpose: Duplicates each item in the input list according to the corresponding count in the dup-count list (in a cylic manner if dup-count is shorter).
+; Pre-conditions: 
+    - The elements of dup-count are all greater or equal than 0.
+;   - The length of dup-count is greater than 0.
+; Tests:
+;   (duplicate-items '(a b c) '(1 2)) => '(a b b c)
+;   (duplicate-items '(x y) '(3 1)) => '(x x x y)
+;   (duplicate-items '() '(1)) => '()
+
+(define duplicate-items
+  (lambda (lst dup-count)
+    (if (empty? lst)
+        '()
+        (append (duplicateNum '() (car lst) (car dup-count)) 
+                (duplicate-items (cdr lst) (append (cdr dup-count) (list (car dup-count))))))))
+
+
+; Signature: duplicateNum(lst, unitLst, count) -> list
+; Type: [List(T) * T * Number -> List(T)]
+; Purpose: Duplicates a single item count times and appends it to lst.
+; Pre-conditions: count >= 0
+; Tests:
+;   (duplicateNum '() 'a 3) => '(a a a)
+;   (duplicateNum '(b) 'c 2) => '(b c c)
+;   (duplicateNum '() 'x 0) => '()
+
+(define duplicateNum
+  (lambda (lst unitLst count)
+    (if (= count 0)
+        lst
+        (duplicateNum (append lst (list unitLst)) unitLst (- count 1)))))
